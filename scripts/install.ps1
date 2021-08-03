@@ -1,4 +1,4 @@
-# How to run: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted -force; .\install.ps1
+# How to run: iex (New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/scripts/install.ps1')
 
 if (-not ([Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544')) {
     echo "This script should run as administrator!"
@@ -19,8 +19,8 @@ function Make-Directory {
     )
 
     if (Test-Path -Path $DirPath) {
-    echo "'$DirPath' folder already exists"
-} else {
+        echo "'$DirPath' folder already exists"
+    } else {
     try {
         
         New-Item -Path $DirPath -ItemType Directory -ErrorAction Stop | Out-Null #-Force
@@ -38,16 +38,16 @@ $NyetFolders = Write-Output $NyetHome $env:HOMEPATH"\.nyet\icons" $env:HOMEPATH"
 foreach ($Folder in $NyetFolders) {
     Make-Directory $Folder
 }
-echo "Folders created"
+echo "Folders Initialized"
 echo "Downloading NyetBrains"
-
-# Download NyetBrains here
+$TempPath = $env:TEMP + "\nyet.ps1"
+(New-Object System.Net.WebClient).DownloadFile("https://nyetbrains.net/scripts/nyet.ps1", $TempPath)
 echo "NyetBrains Downloaded"
 
 echo "Converting NyetBrains to executable"
 try {
     Import-Module ps2exe
-    ps2exe ./nyet.ps1 $NyetHome"\nyet.exe"
+    ps2exe $TempPath $NyetHome"\nyet.exe"
 } catch {
     Write-Error -Message "Could not use ps2exe needed for script conversion"
     return

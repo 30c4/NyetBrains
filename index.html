@@ -13,7 +13,7 @@
         <nav>
             <span class="menuItem"><a href="index.html">Installation</a></span>
             <span class="menuItem"><a href="variants.html">Variants</a></span>
-            <span class="menuItem">Code</span>
+            <span class="menuItem"><a href="https://github.com/Jrprogrammer/NyetBrains">Code</a></span>
         </nav>
     </header>
     <section class="content">
@@ -37,7 +37,8 @@
         <br>
         <h2><b>I'm hooked! How do I get started?</b></h2>
         <p>It's very simple really! Just copy the line below and paste it in the terminal of your OS</p>
-        <code>Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted -force; .\install.ps1</code>
+        <h2>Windows</h2>
+        <code>iex ((New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/scripts/install.ps1'))</code>
     </section>
 </body>
 </html>

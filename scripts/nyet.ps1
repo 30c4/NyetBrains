@@ -1,5 +1,6 @@
 # Create Shortcut tutorial: http://powershellblogger.com/2016/01/create-shortcuts-lnk-or-url-files-with-powershell/
-# How to run: Invoke-Expression(GC .\scripts\nyet.ps1 -Raw)
+# For Self Update with elevated permissions: Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File {file}" -Verb RunAs
+# How to run: Invoke-Expression(GC .\scripts\nyet.ps1 -Raw)`
 
 $HelpText = "
 This is the NyetBrains help screen
@@ -22,35 +23,39 @@ Examples:
 "
 
 function Get-Variants {
-    return
+    $VariantText = (New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/variants/list.txt').split("`n")
+    return $VariantText
 }
 
 function Show-Text {
     Write-Output $HelpText
-    return
+    exit
 }
 
 function Set-Name {
     param ($NewName)
 
     if (-not ($NewName[0] -match "[a-zA-Z]")) {
-        throw "A name must begin with a letter!"
+        Write-Output "A name must begin with a letter!"
     }
 
     $Name = $NewName
 }
 
 function Show-Variants {
-    return
+    Write-Output "Available variants:"
+    foreach ($i in $VariantList) {
+        Write-Output ("- "+$i)
+    }
+    exit
 }
 
 function Show-Installed {
-    return
+    exit
 }
 
 
-$VariantList
-$Variant = ""
+$VariantList = Get-Variants
 $Name = ""
 $NoShortcut = $false
 
@@ -60,17 +65,17 @@ if ($args.count -eq 0) {
 }
 
 for ($i = 0; $i -lt $args.count; $i++) {
-    if ($args[$args.count-1] in $VariantList) {
-        $Variant = $args[$args.count-1]
-    } else {
-        throw "Could not find variant"
-    }
     switch -Regex ($args[$i]) {
         "(-h|--help)\b" {Show-Text}
         "(-n|--name)\b" {Set-Name $args[$i+1]}
         "(-ns|--no-shortcut)\b" {$NoShortcut = $true}
         "(-l|--list)\b" {Show-Variants}
         "(-i|--installed)\b" {Show-Installed}
-        default {continue}
+    }
+
+    if ($i -eq $args.count-1 -and $VariantList -match $args[$args.count-1]) {
+        $Variant = $args[$args.count-1]
+    } else {
+        Write-Output "Could not find variant"
     }
 }
