@@ -46,7 +46,7 @@ echo "NyetBrains Downloaded"
 
 echo "Converting NyetBrains to executable"
 try {
-    Import-Module ps2exe
+    Install-Module ps2exe
     ps2exe $TempPath $NyetHome"\nyet.exe"
 } catch {
     Write-Error -Message "Could not use ps2exe needed for script conversion"
