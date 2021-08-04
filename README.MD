@@ -19,4 +19,4 @@ Even if you don't like the variant you chose, you can still modify the instance 
 ## This is awesome! How can I make my own variant?
 If you just want to use the variant yourself you can start with the blank variant and build it yourself. 
 
-If however, you want to publish your variant so that other people can use it too, please use the command `nyet -o [folder name]` to generate the list of extensions. You can then create a new issue with the 'New Variant' template.
+If however, you want to publish your variant so that other people can use it too, please use the command `nyet -o [folder name]` to generate the list of extensions. You can then create a new issue over [here](https://github.com/Jrprogrammer/NyetBrains/issues/new?assignees=Jrprogrammer&labels=new+variant&template=new-variant.md&title=%5BNew+Variant%5D+-+%7BVariant+name+here%7D)
