@@ -61,7 +61,6 @@ function Show-Installed {
 }
 
 function Create-Shortcut {
-    param($Variant)
 
     if (-not (Test-Path -Path "$HomeDir\icons\$Variant.ico" -PathType Leaf)) {
         (New-Object System.Net.WebClient).DownloadFile("https://nyetbrains.net/icons/$Variant.ico", "$HomeDir\icons\$Variant.ico")
