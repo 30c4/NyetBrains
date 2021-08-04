@@ -104,7 +104,7 @@ ul {
 }
 
 code {
-    margin: 2rem 0 2rem 0;
+    margin: 2rem auto 2rem auto;
     box-sizing: border-box;
     padding: 10px 20px 10px 20px;
     font-family: "JetBrains-Mono", monospace;
@@ -113,8 +113,23 @@ code {
     background-color: rgb(41, 41, 41);
     border: grey 1px solid;
     border-radius: 5px;
-    display: inline-block;
     overflow-x:auto;
     max-width: 75%;
     white-space: nowrap;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+#windows {
+    display: block;
+}
+
+#linux {
+    display: none;
+}
+
+#macOs {
+    display: none;
 }

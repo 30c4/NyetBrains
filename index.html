@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>NyetBrains - Create your own separated IDE's</title>
+    <script>
+        let currentOS = "windows"
+        function changeOs(os) {
+            document.getElementById(currentOS).style.display = "none";
+            document.getElementById(os).style.display = "block";
+            currentOS = os
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -18,7 +26,7 @@
     </header>
     <section class="content">
         <p><b>Are you tired of your mega configs in your multi-purpose Visual Studio Code instance?</b></p>
-        <p><b>Are you longing for a way to use separate IDEs without giving up on the amazing list of extensions and/or paying for them?</b></p>
+        <p><b>Are you longing for a way to use separate IDEs without giving up on the amazing list of extensions?</b></p>
         <br>
         <p><b>LOOK NO FURTHER!</b></p>
         <hr>
@@ -34,11 +42,17 @@
             <li>It's all VSCode!</li>
         </ul>
         <br>
-        <br>
         <h2><b>I'm hooked! How do I get started?</b></h2>
-        <p>It's very simple really! Just copy the line below and paste it in the terminal of your OS</p>
-        <h2>Windows</h2>
-        <code>iex ((New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/scripts/install.ps1'))</code>
+        <p>It's very simple really! Just select your OS and copy the line below and paste it in the terminal of your OS</p>
+        <br>
+        <div>
+            <b class="clickable" onclick="changeOs('windows')">Windows</b> |
+            <b class="clickable" onclick="changeOs('linux')">Linux</b> |
+            <b class="clickable" onclick="changeOs('macOs')">MacOs</b>
+            <code id="windows">iex ((New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/scripts/install.ps1'))</code>
+            <code id="linux">Linux code</code>
+            <code id="macOs">Mac Code</code>
+        </div>
     </section>
 </body>
 </html>
