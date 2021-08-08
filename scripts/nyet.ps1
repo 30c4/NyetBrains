@@ -1,6 +1,5 @@
 # Create Shortcut tutorial: http://powershellblogger.com/2016/01/create-shortcuts-lnk-or-url-files-with-powershell/
 # For Self Update with elevated permissions: Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File {file}" -Verb RunAs
-# How to run: Invoke-Expression(GC .\scripts\nyet.ps1 -Raw)`
 
 $HomeDir = "C:"+$env:HOMEPATH+"\.nyet"
 $HelpText = "
@@ -8,7 +7,7 @@ This is the NyetBrains help screen
 Check out the options below to see what's possible!
 
 Usage:
-    nyet [options] [variant]
+    nyet [options] [instance]/[variant]
 
 Arguments:
     -h  --help              This page
@@ -16,6 +15,7 @@ Arguments:
     -ns --no-shortcut       Don't generate a shortcut
     -l  --list              List all available variants
     -i  --installed         List all installed variants
+    -e  --extensions        List all the extensions of a given instance
 
 Examples:
     nyet -n js-instance javascript
@@ -24,17 +24,17 @@ Examples:
 "
 
 function Get-Variants {
-    $VariantText = ((New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/variants/list.txt') -split "\n").Trim()
+    $VariantText = ((New-Object System.Net.WebClient).DownloadString('https://nyetbrains.net/variants/list.txt') -split "\n")
     return $VariantText
 }
 
 function Get-Random {
+    # Random word generator for folder names
     return ((invoke-webrequest -Uri "https://random-word-api.herokuapp.com/word?number=1&swear=0").content | convertfrom-json)
 }
 
-function Show-Text {
-    Write-Output $HelpText
-    exit
+function Get-Installed {
+    return Get-ChildItem $HomeDir"\variants" | Where-Object {$_.PSIsContainer} | Foreach-Object {$_.Name}
 }
 
 function Set-Name {
@@ -48,6 +48,11 @@ function Set-Name {
     return $NewName
 }
 
+function Show-Text {
+    Write-Output $HelpText
+    exit
+}
+
 function Show-Variants {
     Write-Output "Available variants:"
     foreach ($i in $VariantList) {
@@ -57,6 +62,39 @@ function Show-Variants {
 }
 
 function Show-Installed {
+    # Gets all folders in the home folder and stores it as an array 
+    $InstalledVariants = Get-Installed
+
+    Write-Output "Variant`t`tName"
+    Write-Output "--------------------------"
+    foreach ($Var in $InstalledVariants) {
+        $Split = $Var.split("-")
+
+        # Handling for non-standard names
+        if (($Split.count) -gt 1 -and $VariantList -contains $Split[0]) {
+            Write-Output "$($Split[0])`t`t$($Split[0..-1] -join "-")"
+        } else {
+            Write-Output "???`t`t$($Split -join "-")"
+        }
+        
+    }
+    exit
+}
+
+function Show-Extensions {
+    param($DirName)
+
+    if (-not $DirName) {
+        Write-Output "No instance name was given"
+        exit
+    }
+
+    if ((Get-Installed) -contains $DirName) {
+        Write-Output (code --extensions-dir="$HomeDir\variants\$DirName\Extensions" --list-extensions)
+    } else {
+        Write-Output "Could not find instance $DirName"
+    }
+    
     exit
 }
 
@@ -67,9 +105,9 @@ function Create-Shortcut {
     }
 
     $Shell = New-Object -ComObject ("WScript.Shell")
-    $ShortCut = $Shell.CreateShortcut($env:USERPROFILE + "\Desktop\$DirName.lnk")
+    $ShortCut = $Shell.CreateShortcut($env:USERPROFILE + "\Desktop\$Name.lnk")
     $ShortCut.TargetPath = "code"
-    $ShortCut.Arguments = " --user-data-dir=$HomeDir\variants\$DirName --extensions-dir=$HomeDir\variants\$DirName\extensions"
+    $ShortCut.Arguments = " --user-data-dir=$HomeDir\variants\$DirName --extensions-dir=$HomeDir\variants\$DirName\Extensions | exit"
     $ShortCut.IconLocation = "$HomeDir\icons\$Variant.ico"
     $ShortCut.Save()
     exit
@@ -78,14 +116,30 @@ function Create-Shortcut {
 function Create-Variant {
     $DirName = $Variant + "-" + (Get-Random)
     if (-not ($Name -eq "")) {
-        $DirName = $Name
+        $DirName = $Variant + "-" +$Name
     }
 
     try {
-        New-Item -Path $HomeDir"\variants\"$DirName -ItemType Directory -ErrorAction Stop | Out-Null
-        New-Item -Path $HomeDir"\variants\"$DirName"\extensions" -ItemType Directory -ErrorAction Stop | Out-Null
+        New-Item -Path "$HomeDir\variants\$DirName" -ItemType Directory -ErrorAction Stop | Out-Null
+        New-Item -Path "$HomeDir\variants\$DirName\Extensions" -ItemType Directory -ErrorAction Stop | Out-Null
     } catch {
         Write-Error -Message "Unable to create directories. Error was: $_" -ErrorAction Stop
+    }
+
+    if ($Variant -ne "blank") {
+        try {
+            New-Item -Path "$HomeDir\variants\$DirName\User" -ItemType Directory -ErrorAction Stop | Out-Null
+            (New-Object System.Net.WebClient).DownloadFile("https://nyetbrains.net/variants/$Variant/settings.json", "$HomeDir\variants\$DirName\User\settings.json")
+            (New-Object System.Net.WebClient).DownloadFile("https://nyetbrains.net/variants/$Variant/keybindings.json", "$HomeDir\variants\$DirName\User\keybindings.json")
+
+            $BaseCommand = "code --extensions-dir=$HomeDir\variants\$DirName\Extensions"
+            foreach ($Ext in ((New-Object System.Net.WebClient).DownloadString("https://nyetbrains.net/variants/$Variant/extensions.txt") -split "\n")) {
+                $BaseCommand += " --install-extension $Ext"
+            }
+
+        } catch {
+            Write-Error -Message "Unable to download files. Error was: $_" -ErrorAction Stop
+        }
     }
 
     if (-not $NoShortcut) {
@@ -107,11 +161,12 @@ if ($args.count -eq 0) {
 
 for ($i = 0; $i -lt $args.count; $i++) {
     switch -Regex ($args[$i]) {
-        "(-h|--help)\b" {Show-Text}
-        "(-n|--name)\b" {$Name = (Set-Name $args[$i+1])}
-        "(-ns|--no-shortcut)\b" {$NoShortcut = $true}
-        "(-l|--list)\b" {Show-Variants}
-        "(-i|--installed)\b" {Show-Installed}
+        "-h\b|--help\b" {Show-Text}
+        "-n\b|--name\b" {$Name = (Set-Name $args[$i+1])}
+        "-ns\b|--no-shortcut\b" {$NoShortcut = $true}
+        "-l\b|--list\b" {Show-Variants}
+        "-i\b|--installed\b" {Show-Installed}
+        "-e\b|--extensions\b" {Show-Extensions $args[$i+1]}
         default {
             if ($args[$i][0] -eq "-") {
                 Write-Output "Argument not found: "$args[$i]

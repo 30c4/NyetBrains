@@ -1,0 +1,51 @@
+{
+    "workbench.startupEditor": "none",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.view.alwaysShowHeaderActions": true,
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "files.autoSave": "afterDelay",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "rust-client.engine": "rust-analyzer",
+    "rust.all_features": true,
+    "debug.openDebug": "openOnSessionStart",
+    "debug.allowBreakpointsEverywhere": true,
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Debug",
+                "cargo": {
+                    "args": [
+                        "build"
+                    ]
+                },
+                "program": "${cargo:program}",
+                "args": [],
+                "cwd": "${workspaceFolder}",
+                "sourceLanguages": [
+                    "rust"
+                ]
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Test",
+                "cargo": {
+                    "args": [
+                        "test"
+                    ]
+                },
+                "program": "${cargo:program}",
+                "args": [],
+                "cwd": "${workspaceFolder}",
+                "sourceLanguages": [
+                    "rust"
+                ]
+            }
+        ]
+    }
+}

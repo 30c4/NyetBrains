@@ -1,0 +1,5 @@
+bungcip.better-toml
+matklad.rust-analyzer
+PKief.material-icon-theme
+rust-lang.rust
+vadimcn.vscode-lldb
