@@ -7,8 +7,6 @@
     "files.autoSave": "afterDelay",
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
-    "rust-client.engine": "rust-analyzer",
-    "rust.all_features": true,
     "debug.openDebug": "openOnSessionStart",
     "debug.allowBreakpointsEverywhere": true,
     "launch": {

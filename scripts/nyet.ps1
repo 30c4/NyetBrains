@@ -137,6 +137,8 @@ function Create-Variant {
                 $BaseCommand += " --install-extension $Ext"
             }
 
+            (Invoke-Expression $BaseCommand)
+
         } catch {
             Write-Error -Message "Unable to download files. Error was: $_" -ErrorAction Stop
         }
@@ -176,7 +178,7 @@ for ($i = 0; $i -lt $args.count; $i++) {
                     Write-Output "Could not find variant: "$args[$i]
                 } else {
                     $Variant = $args[$i]
-                    (Create-Variant)
+                    Create-Variant
                 }   
             } 
         }

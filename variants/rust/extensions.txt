@@ -1,5 +1,5 @@
 bungcip.better-toml
+eamodio.gitlens
 matklad.rust-analyzer
 PKief.material-icon-theme
-rust-lang.rust
 vadimcn.vscode-lldb
