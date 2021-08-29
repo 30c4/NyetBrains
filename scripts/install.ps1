@@ -74,8 +74,8 @@ if (!$NyetFound) {
     }
 }
 
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "| Installation of NyetBrains is complete, please continue in an unprivileged container |"
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "| Installation of NyetBrains is complete, please continue in an unprivileged terminal |"
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 return
